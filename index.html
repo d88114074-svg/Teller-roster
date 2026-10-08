@@ -226,6 +226,26 @@ button{
     break-after:auto;
   }
 }
+  .preview-page{
+  display:none;
+}
+
+.preview-buttons{
+  max-width:500px;
+  margin:15px auto;
+  display:flex;
+  gap:10px;
+}
+
+.preview-buttons button{
+  flex:1;
+}
+
+@media print{
+  .preview-buttons{
+    display:none;
+  }
+}
 
 </style>
 
@@ -458,23 +478,22 @@ button{
 
 <section class="panel">
 <button onclick="generateRoster()">📋 Generate Roster</button>
-<button onclick="window.print()">🖨️ Print / Save PDF</button>
+
 </section>
 
 
 
 <!-- ROSTER -->
 
-<section class="panel">
+<section id="previewPage" class="preview-page">
+  <div class="preview-buttons">
+    <button onclick="backToEditor()">↩️ Back / Edit</button>
+    <button onclick="window.print()">🖨️ Print / Save PDF</button>
+  </div>
 
-<div id="rosterOutput">
-
-<p class="small-note">
-The generated roster will appear here.
-</p>
-
-</div>
-
+  <div id="rosterOutput">
+    <p class="small-note">The generated roster will appear here.</p>
+  </div>
 </section>
 
 
@@ -987,9 +1006,23 @@ const rotationIndex = (6 - (workingDays % 6)) % 6;
 document.getElementById(
   "rosterOutput"
 ).innerHTML = html;
+  document.querySelectorAll("main > section").forEach(section => {
+  section.style.display = "none";
+});
+
+document.getElementById("previewPage").style.display = "block";
+window.scrollTo(0, 0);
   }
 
+function backToEditor(){
+  document.querySelectorAll("main > section").forEach(section => {
+    section.style.display = "";
+  });
 
+  document.getElementById("previewPage").style.display = "none";
+
+  window.scrollTo(0, 0);
+} 
 </script>
 
 </body>
