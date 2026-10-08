@@ -604,53 +604,109 @@ function generateRoster(){
 
 
 
-  let html = `
-
-    <div class="month-title">
-
-      <h2>
-        TELLER STAFF ROSTER - ${workplace}
-      </h2>
-
-      <h3>
-        ${monthName}
-      </h3>
-
-    </div>
+  let html = "";
 
 
-    <div id="rosterWrapper">
+/*
+  Split the month into two printable pages.
 
-    <table id="rosterTable">
+  Page 1 = days 1 to 15
+  Page 2 = days 16 to end of month
+*/
 
-      <thead>
 
-        <tr>
+const pages = [
 
-          <th>Team</th>
+  {
+    start:1,
+    end:Math.min(15,daysInMonth)
+  },
 
-          <th class="head-cell">
-            Head Teller
-          </th>
+  {
+    start:16,
+    end:daysInMonth
+  }
 
-          <th>Roster</th>
+];
+
+
+pages.forEach((page,pageIndex)=>{
+
+  if(page.start > daysInMonth){
+    return;
+  }
+
+
+  html += `
+
+    <div class="roster-page">
+
+      <div class="roster-page-title">
+
+        <h2>
+          TELLER STAFF ROSTER - ${workplace}
+        </h2>
+
+        <h3>
+          ${monthName}
+        </h3>
+
+        <div>
+          Page ${pageIndex + 1}
+        </div>
+
+      </div>
+
+
+      <div class="roster-table-wrapper">
+
+      <table id="rosterTable">
+
+        <thead>
+
+          <tr>
+
+            <th>Team</th>
+
+            <th>Head Teller</th>
+
+            <th>Roster</th>
 
   `;
 
 
-
-  // DAY HEADINGS
+  /*
+    DAY HEADINGS
+  */
 
   for(
-    let day=1;
-    day<=daysInMonth;
+    let day=page.start;
+    day<=page.end;
     day++
   ){
+
+    const date =
+      new Date(
+        year,
+        month-1,
+        day
+      );
+
+
+    const dayName =
+      date.toLocaleDateString(
+        "en-US",
+        {
+          weekday:"short"
+        }
+      );
+
 
     html += `
 
       <th>
-        ${day}
+        ${day}<br>
+        ${dayName}
       </th>
 
     `;
@@ -660,34 +716,27 @@ function generateRoster(){
 
   html += `
 
-        </tr>
+          </tr>
 
-      </thead>
+        </thead>
 
-      <tbody>
+        <tbody>
 
   `;
 
 
 
-  // THREE TEAMS
+  /*
+    THREE TEAMS
+  */
 
   teams.forEach(
     (team,teamIndex)=>{
 
 
-      const shift =
-        shiftPattern[
-          Math.floor(
-            0 / 4
-          ) % 3
-        ][teamIndex];
-
-
       /*
-        Six rows per team
+        Six tellers in each team
       */
-
 
       for(
         let tellerIndex=0;
@@ -699,7 +748,9 @@ function generateRoster(){
         html += `<tr>`;
 
 
-        // TEAM COLUMN
+        /*
+          TEAM NAME
+        */
 
         if(tellerIndex===0){
 
@@ -717,8 +768,9 @@ function generateRoster(){
         }
 
 
-
-        // HEAD TELLER
+        /*
+          HEAD TELLER
+        */
 
         if(tellerIndex===0){
 
@@ -736,8 +788,9 @@ function generateRoster(){
         }
 
 
-
-        // ROSTER NUMBER
+        /*
+          FIXED T NUMBER
+        */
 
         html += `
 
@@ -749,27 +802,29 @@ function generateRoster(){
 
 
 
-        // EACH DAY
+        /*
+          DAILY TELLER ID
+        */
 
         for(
-          let day=1;
-          day<=daysInMonth;
+          let day=page.start;
+          day<=page.end;
           day++
         ){
 
 
           /*
-            Teller ID rotation
+            Teller rotation
 
             Day 1:
-            index 0
+            T1 = ID1
+            T2 = ID2
+            ...
+            T6 = ID6
 
             Day 2:
-            index 5
-
-            Day 3:
-            index 4
-
+            T1 = ID6
+            T2 = ID1
             ...
           */
 
@@ -790,7 +845,26 @@ function generateRoster(){
 
 
 
-          // SHIFT CHANGES EVERY 4 DAYS
+          /*
+            SHIFT ROTATION
+
+            Every 4 days:
+
+            1-4
+            Team 1 DAY
+            Team 2 NIGHT
+            Team 3 OFF
+
+            5-8
+            Team 1 NIGHT
+            Team 2 OFF
+            Team 3 DAY
+
+            9-12
+            Team 1 OFF
+            Team 2 DAY
+            Team 3 NIGHT
+          */
 
           const shiftGroup =
             Math.floor(
@@ -804,21 +878,16 @@ function generateRoster(){
             ][teamIndex];
 
 
+          let cellClass = "day";
 
-          let cellClass =
-            "day";
-
-
-          let cellText =
-            tellerId;
+          let cellText = tellerId;
 
 
           if(
             currentShift === "NIGHT"
           ){
 
-            cellClass =
-              "night";
+            cellClass = "night";
 
           }
 
@@ -827,14 +896,11 @@ function generateRoster(){
             currentShift === "OFF"
           ){
 
-            cellClass =
-              "off";
+            cellClass = "off";
 
-            cellText =
-              "OFF";
+            cellText = "OFF";
 
           }
-
 
 
           html += `
@@ -856,24 +922,25 @@ function generateRoster(){
   );
 
 
-
   html += `
 
-      </tbody>
+        </tbody>
 
-    </table>
+      </table>
+
+      </div>
 
     </div>
 
   `;
 
+});
 
 
-  document.getElementById(
-    "rosterOutput"
-  ).innerHTML = html;
-
-}
+document.getElementById(
+  "rosterOutput"
+).innerHTML = html;
+  }
 
 
 </script>
