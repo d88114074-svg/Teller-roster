@@ -828,11 +828,18 @@ pages.forEach((page,pageIndex)=>{
             ...
           */
 
-          const rotationIndex =
-            (
-              6 -
-              ((day - 1) % 6)
-            ) % 6;
+          let workingDays = 0;
+
+for(let d = 1; d < day; d++){
+  const previousShiftGroup = Math.floor((d - 1) / 4) % 3;
+  const previousShift = shiftPattern[previousShiftGroup][teamIndex];
+
+  if(previousShift !== "OFF"){
+    workingDays++;
+  }
+}
+
+const rotationIndex = (6 - (workingDays % 6)) % 6;
 
 
           const tellerId =
