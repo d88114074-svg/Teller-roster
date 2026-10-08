@@ -1,656 +1,106 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<title>Duty Roster Generator</title>
-
-<style>
-
-*{
-  box-sizing:border-box;
-}
-
-body{
-  margin:0;
-  font-family:Arial,sans-serif;
-  background:#f2f4f7;
-  color:#222;
-}
-
-header{
-  background:#0b5ed7;
-  color:white;
-  padding:16px;
-  text-align:center;
-}
-
-header h1{
-  margin:0;
-  font-size:22px;
-}
-
-main{
-  max-width:1100px;
-  margin:auto;
-  padding:15px;
-}
-
-.panel{
-  background:white;
-  padding:15px;
-  margin-bottom:15px;
-  border-radius:10px;
-  box-shadow:0 2px 8px rgba(0,0,0,.08);
-}
-
-h2{
-  margin-top:0;
-}
-
-label{
-  display:block;
-  font-weight:bold;
-  margin-top:10px;
-  margin-bottom:5px;
-}
-
-input{
-  width:100%;
-  padding:10px;
-  border:1px solid #ccc;
-  border-radius:6px;
-  font-size:16px;
-}
-
-button{
-  width:100%;
-  padding:12px;
-  margin-top:12px;
-  border:0;
-  border-radius:6px;
-  background:#0b5ed7;
-  color:white;
-  font-size:16px;
-  cursor:pointer;
-}
-
-.team-box{
-  border:1px solid #ccc;
-  border-radius:8px;
-  padding:12px;
-  margin-top:15px;
-  background:#fafafa;
-}
-
-.team-box h3{
-  margin-top:0;
-}
-
-.teller-row{
-  display:flex;
-  align-items:center;
-  gap:10px;
-  margin-bottom:8px;
-}
-
-.teller-row span{
-  width:35px;
-  font-weight:bold;
-}
-
-.teller-row input{
-  flex:1;
-}
+let html = "";
 
 
-/* ROSTER PREVIEW */
+/*
+  Split the month into two printable pages.
 
-#rosterWrapper{
-  overflow-x:auto;
-}
+  Page 1 = days 1 to 15
+  Page 2 = days 16 to end of month
+*/
 
-#rosterTable{
-  border-collapse:collapse;
-  width:max-content;
-  min-width:100%;
-  font-size:11px;
-}
 
-#rosterTable th,
-#rosterTable td{
-  border:1px solid #777;
-  padding:5px;
-  text-align:center;
-  min-width:35px;
-  height:30px;
-}
+const pages = [
 
-#rosterTable th{
-  background:#e9ecef;
-  font-weight:bold;
-}
+  {
+    start:1,
+    end:Math.min(15,daysInMonth)
+  },
 
-.team-cell{
-  font-weight:bold;
-  background:#f1f1f1;
-  vertical-align:middle;
-}
-
-.head-cell{
-  min-width:130px !important;
-  text-align:left !important;
-}
-
-.roster-cell{
-  font-weight:bold;
-  min-width:45px !important;
-}
-
-.night{
-  background:#bdbdbd;
-}
-
-.off{
-  background:#eeeeee;
-  font-weight:bold;
-}
-
-.day{
-  background:white;
-}
-
-.month-title{
-  text-align:center;
-  margin-bottom:12px;
-}
-
-.small-note{
-  color:#666;
-  font-size:13px;
-}
-
-@media(max-width:600px){
-
-  main{
-    padding:8px;
+  {
+    start:16,
+    end:daysInMonth
   }
 
-  .panel{
-    padding:10px;
-  }
+];
 
-}
 
-</style>
+pages.forEach((page,pageIndex)=>{
 
-</head>
-
-<body>
-
-<header>
-
-<h1>📋 Duty Roster Generator</h1>
-
-</header>
-
-
-<main>
-
-
-<!-- ROSTER DETAILS -->
-
-<section class="panel">
-
-<h2>📅 Roster Details</h2>
-
-<label>Workplace</label>
-
-<input
-  type="text"
-  id="workplace"
-  value="Kurunegala IC"
-  placeholder="Workplace name"
->
-
-
-<label>Month</label>
-
-<input
-  type="month"
-  id="rosterMonth"
->
-
-
-</section>
-
-
-
-<!-- TEAM 1 -->
-
-<section class="panel">
-
-<h2>👥 Team 1</h2>
-
-<div class="team-box">
-
-<label>Head Teller</label>
-
-<input
-  type="text"
-  id="head1"
-  placeholder="Head Teller name"
->
-
-
-<h4>Teller IDs</h4>
-
-
-<div class="teller-row">
-<span>T1</span>
-<input type="text" id="team1t1" placeholder="Teller ID">
-</div>
-
-
-<div class="teller-row">
-<span>T2</span>
-<input type="text" id="team1t2" placeholder="Teller ID">
-</div>
-
-
-<div class="teller-row">
-<span>T3</span>
-<input type="text" id="team1t3" placeholder="Teller ID">
-</div>
-
-
-<div class="teller-row">
-<span>T4</span>
-<input type="text" id="team1t4" placeholder="Teller ID">
-</div>
-
-
-<div class="teller-row">
-<span>T5</span>
-<input type="text" id="team1t5" placeholder="Teller ID">
-</div>
-
-
-<div class="teller-row">
-<span>T6</span>
-<input type="text" id="team1t6" placeholder="Teller ID">
-</div>
-
-</div>
-
-</section>
-
-
-
-<!-- TEAM 2 -->
-
-<section class="panel">
-
-<h2>👥 Team 2</h2>
-
-<div class="team-box">
-
-<label>Head Teller</label>
-
-<input
-  type="text"
-  id="head2"
-  placeholder="Head Teller name"
->
-
-
-<h4>Teller IDs</h4>
-
-
-<div class="teller-row">
-<span>T1</span>
-<input type="text" id="team2t1" placeholder="Teller ID">
-</div>
-
-
-<div class="teller-row">
-<span>T2</span>
-<input type="text" id="team2t2" placeholder="Teller ID">
-</div>
-
-
-<div class="teller-row">
-<span>T3</span>
-<input type="text" id="team2t3" placeholder="Teller ID">
-</div>
-
-
-<div class="teller-row">
-<span>T4</span>
-<input type="text" id="team2t4" placeholder="Teller ID">
-</div>
-
-
-<div class="teller-row">
-<span>T5</span>
-<input type="text" id="team2t5" placeholder="Teller ID">
-</div>
-
-
-<div class="teller-row">
-<span>T6</span>
-<input type="text" id="team2t6" placeholder="Teller ID">
-</div>
-
-</div>
-
-</section>
-
-
-
-<!-- TEAM 3 -->
-
-<section class="panel">
-
-<h2>👥 Team 3</h2>
-
-<div class="team-box">
-
-<label>Head Teller</label>
-
-<input
-  type="text"
-  id="head3"
-  placeholder="Head Teller name"
->
-
-
-<h4>Teller IDs</h4>
-
-
-<div class="teller-row">
-<span>T1</span>
-<input type="text" id="team3t1" placeholder="Teller ID">
-</div>
-
-
-<div class="teller-row">
-<span>T2</span>
-<input type="text" id="team3t2" placeholder="Teller ID">
-</div>
-
-
-<div class="teller-row">
-<span>T3</span>
-<input type="text" id="team3t3" placeholder="Teller ID">
-</div>
-
-
-<div class="teller-row">
-<span>T4</span>
-<input type="text" id="team3t4" placeholder="Teller ID">
-</div>
-
-
-<div class="teller-row">
-<span>T5</span>
-<input type="text" id="team3t5" placeholder="Teller ID">
-</div>
-
-
-<div class="teller-row">
-<span>T6</span>
-<input type="text" id="team3t6" placeholder="Teller ID">
-</div>
-
-</div>
-
-</section>
-
-
-
-<!-- GENERATE -->
-
-<section class="panel">
-
-<button onclick="generateRoster()">
-  📋 Generate Roster
-</button>
-
-</section>
-
-
-
-<!-- ROSTER -->
-
-<section class="panel">
-
-<div id="rosterOutput">
-
-<p class="small-note">
-The generated roster will appear here.
-</p>
-
-</div>
-
-</section>
-
-
-</main>
-
-
-
-<script>
-
-
-function getTeam(teamNumber){
-
-  const head =
-    document.getElementById(
-      "head" + teamNumber
-    ).value.trim();
-
-
-  const tellers = [];
-
-
-  for(let i=1;i<=6;i++){
-
-    const value =
-      document.getElementById(
-        "team" + teamNumber + "t" + i
-      ).value.trim();
-
-
-    tellers.push(
-      value || ("ID" + i)
-    );
-
-  }
-
-
-  return {
-    head: head || "Head Teller",
-    tellers: tellers
-  };
-
-}
-
-
-
-function generateRoster(){
-
-
-  const workplace =
-    document.getElementById(
-      "workplace"
-    ).value.trim()
-    || "Kurunegala IC";
-
-
-  const monthValue =
-    document.getElementById(
-      "rosterMonth"
-    ).value;
-
-
-  if(!monthValue){
-
-    alert("Please select the month.");
-
+  if(page.start > daysInMonth){
     return;
-
   }
 
 
-  const parts =
-    monthValue.split("-");
+  html += `
+
+    <div class="roster-page">
+
+      <div class="roster-page-title">
+
+        <h2>
+          TELLER STAFF ROSTER - ${workplace}
+        </h2>
+
+        <h3>
+          ${monthName}
+        </h3>
+
+        <div>
+          Page ${pageIndex + 1}
+        </div>
+
+      </div>
 
 
-  const year =
-    Number(parts[0]);
+      <div class="roster-table-wrapper">
 
+      <table id="rosterTable">
 
-  const month =
-    Number(parts[1]);
+        <thead>
 
+          <tr>
 
-  const daysInMonth =
-    new Date(
-      year,
-      month,
-      0
-    ).getDate();
+            <th>Team</th>
 
+            <th>Head Teller</th>
 
-  const teams = [
-
-    getTeam(1),
-    getTeam(2),
-    getTeam(3)
-
-  ];
-
-
-  const monthName =
-    new Date(
-      year,
-      month - 1,
-      1
-    ).toLocaleDateString(
-      "en-US",
-      {
-        month:"long",
-        year:"numeric"
-      }
-    );
-
-
-
-  /*
-    SHIFT ROTATION
-
-    4 days:
-    Team 1 = DAY
-    Team 2 = NIGHT
-    Team 3 = OFF
-
-    Next 4:
-    Team 1 = NIGHT
-    Team 2 = OFF
-    Team 3 = DAY
-
-    Next 4:
-    Team 1 = OFF
-    Team 2 = DAY
-    Team 3 = NIGHT
-
-    Then repeat.
-  */
-
-
-  const shiftPattern = [
-
-    ["DAY","NIGHT","OFF"],
-
-    ["NIGHT","OFF","DAY"],
-
-    ["OFF","DAY","NIGHT"]
-
-  ];
-
-
-
-  /*
-    TELLER ROTATION
-
-    Day 1:
-    T1 = ID1
-    T2 = ID2
-    ...
-    T6 = ID6
-
-    Day 2:
-    T1 = ID6
-    T2 = ID1
-    ...
-    T6 = ID5
-
-    Therefore the rotation index is:
-    (6 - dayIndex) % 6
-  */
-
-
-
-  let html = `
-
-    <div class="month-title">
-
-      <h2>
-        TELLER STAFF ROSTER - ${workplace}
-      </h2>
-
-      <h3>
-        ${monthName}
-      </h3>
-
-    </div>
-
-
-    <div id="rosterWrapper">
-
-    <table id="rosterTable">
-
-      <thead>
-
-        <tr>
-
-          <th>Team</th>
-
-          <th class="head-cell">
-            Head Teller
-          </th>
-
-          <th>Roster</th>
+            <th>Roster</th>
 
   `;
 
 
-
-  // DAY HEADINGS
+  /*
+    DAY HEADINGS
+  */
 
   for(
-    let day=1;
-    day<=daysInMonth;
+    let day=page.start;
+    day<=page.end;
     day++
   ){
+
+    const date =
+      new Date(
+        year,
+        month-1,
+        day
+      );
+
+
+    const dayName =
+      date.toLocaleDateString(
+        "en-US",
+        {
+          weekday:"short"
+        }
+      );
+
 
     html += `
 
       <th>
-        ${day}
+        ${day}<br>
+        ${dayName}
       </th>
 
     `;
@@ -660,34 +110,27 @@ function generateRoster(){
 
   html += `
 
-        </tr>
+          </tr>
 
-      </thead>
+        </thead>
 
-      <tbody>
+        <tbody>
 
   `;
 
 
 
-  // THREE TEAMS
+  /*
+    THREE TEAMS
+  */
 
   teams.forEach(
     (team,teamIndex)=>{
 
 
-      const shift =
-        shiftPattern[
-          Math.floor(
-            0 / 4
-          ) % 3
-        ][teamIndex];
-
-
       /*
-        Six rows per team
+        Six tellers in each team
       */
-
 
       for(
         let tellerIndex=0;
@@ -699,7 +142,9 @@ function generateRoster(){
         html += `<tr>`;
 
 
-        // TEAM COLUMN
+        /*
+          TEAM NAME
+        */
 
         if(tellerIndex===0){
 
@@ -717,8 +162,9 @@ function generateRoster(){
         }
 
 
-
-        // HEAD TELLER
+        /*
+          HEAD TELLER
+        */
 
         if(tellerIndex===0){
 
@@ -736,8 +182,9 @@ function generateRoster(){
         }
 
 
-
-        // ROSTER NUMBER
+        /*
+          FIXED T NUMBER
+        */
 
         html += `
 
@@ -749,27 +196,29 @@ function generateRoster(){
 
 
 
-        // EACH DAY
+        /*
+          DAILY TELLER ID
+        */
 
         for(
-          let day=1;
-          day<=daysInMonth;
+          let day=page.start;
+          day<=page.end;
           day++
         ){
 
 
           /*
-            Teller ID rotation
+            Teller rotation
 
             Day 1:
-            index 0
+            T1 = ID1
+            T2 = ID2
+            ...
+            T6 = ID6
 
             Day 2:
-            index 5
-
-            Day 3:
-            index 4
-
+            T1 = ID6
+            T2 = ID1
             ...
           */
 
@@ -790,7 +239,26 @@ function generateRoster(){
 
 
 
-          // SHIFT CHANGES EVERY 4 DAYS
+          /*
+            SHIFT ROTATION
+
+            Every 4 days:
+
+            1-4
+            Team 1 DAY
+            Team 2 NIGHT
+            Team 3 OFF
+
+            5-8
+            Team 1 NIGHT
+            Team 2 OFF
+            Team 3 DAY
+
+            9-12
+            Team 1 OFF
+            Team 2 DAY
+            Team 3 NIGHT
+          */
 
           const shiftGroup =
             Math.floor(
@@ -804,21 +272,16 @@ function generateRoster(){
             ][teamIndex];
 
 
+          let cellClass = "day";
 
-          let cellClass =
-            "day";
-
-
-          let cellText =
-            tellerId;
+          let cellText = tellerId;
 
 
           if(
             currentShift === "NIGHT"
           ){
 
-            cellClass =
-              "night";
+            cellClass = "night";
 
           }
 
@@ -827,14 +290,11 @@ function generateRoster(){
             currentShift === "OFF"
           ){
 
-            cellClass =
-              "off";
+            cellClass = "off";
 
-            cellText =
-              "OFF";
+            cellText = "OFF";
 
           }
-
 
 
           html += `
@@ -856,27 +316,21 @@ function generateRoster(){
   );
 
 
-
   html += `
 
-      </tbody>
+        </tbody>
 
-    </table>
+      </table>
+
+      </div>
 
     </div>
 
   `;
 
+});
 
 
-  document.getElementById(
-    "rosterOutput"
-  ).innerHTML = html;
-
-}
-
-
-</script>
-
-</body>
-</html>
+document.getElementById(
+  "rosterOutput"
+).innerHTML = html;
