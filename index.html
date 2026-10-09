@@ -784,11 +784,11 @@ pages.forEach((page,pageIndex)=>{
 
           <tr>
 
-            <th>Team</th>
-
-            <th>Head Teller</th>
-
-            <th>Roster</th>
+            ${pageIndex === 0 ? `
+  <th>Team</th>
+  <th>Head Teller</th>
+  <th>Roster</th>
+` : ''}
 
   `;
 
