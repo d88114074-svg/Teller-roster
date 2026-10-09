@@ -585,6 +585,11 @@ function generateRoster(){
 
   const month =
     Number(parts[1]);
+ const startingPatternDay = Number(
+document.getElementById("startingPatternDay").value
+);
+
+const startingShift = document.getElementById("startingShift").value; 
 
 
   const daysInMonth =
@@ -643,13 +648,27 @@ function generateRoster(){
 
   const shiftPattern = [
 
-    ["DAY","NIGHT","OFF"],
+["DAY","NIGHT","OFF"],
 
-    ["NIGHT","OFF","DAY"],
+["NIGHT","OFF","DAY"],
 
-    ["OFF","DAY","NIGHT"]
+["OFF","DAY","NIGHT"]
 
-  ];
+];
+
+// Determine the starting position using Team 1.
+const shiftNames = ["day", "night", "off"];
+
+const startingShiftGroup = shiftPattern.findIndex(
+group => group[0] === startingShift.toUpperCase()
+);
+
+const startingGroup = (
+startingShiftGroup -
+Math.floor((startingPatternDay - 1) / 4)
+
++ 3
+  ) % 3;
 
 
 
@@ -901,12 +920,18 @@ pages.forEach((page,pageIndex)=>{
           let workingDays = 0;
 
 for(let d = 1; d < day; d++){
-  const previousShiftGroup = Math.floor((d - 1) / 4) % 3;
-  const previousShift = shiftPattern[previousShiftGroup][teamIndex];
 
-  if(previousShift !== "OFF"){
-    workingDays++;
-  }
+const previousShiftGroup = (
+startingGroup +
+Math.floor((startingPatternDay + d - 2) / 4)
+) % 3;
+
+const previousShift =
+shiftPattern[previousShiftGroup][teamIndex];
+
+if(previousShift !== "OFF"){
+workingDays++;
+}
 }
 
 const rotationIndex = (6 - (workingDays % 6)) % 6;
@@ -943,10 +968,12 @@ const rotationIndex = (6 - (workingDays % 6)) % 6;
             Team 3 NIGHT
           */
 
-          const shiftGroup =
-            Math.floor(
-              (day - 1) / 4
-            ) % 3;
+          const shiftGroup = (
+startingGroup +
+Math.floor(
+(startingPatternDay + day - 2) / 4
+)
+) % 3;
 
 
           const currentShift =
