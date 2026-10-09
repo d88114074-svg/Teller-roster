@@ -136,6 +136,9 @@ border:2px solid #000;
   background:#e9ecef;
   font-weight:bold;
 }
+  #rosterTable tr.team-divider td{
+  border-bottom:3px solid #000;
+}
 
 .team-cell{
   font-weight:bold;
@@ -849,7 +852,7 @@ pages.forEach((page,pageIndex)=>{
       ){
 
 
-        html += `<tr>`;
+        html += `<tr class="${tellerIndex === 5 ? 'team-divider' : ''}">`;
 
 
         /*
