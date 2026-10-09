@@ -150,7 +150,9 @@ button{
 }
 
 .night{
-  background:#bdbdbd;
+  background:#bdbdbd !important;
+  -webkit-print-color-adjust:exact !important;
+  print-color-adjust:exact !important;
 }
 
 .off{
@@ -224,6 +226,15 @@ button{
   .roster-page:last-child{
     page-break-after:auto;
     break-after:auto;
+  }
+      .roster-page,
+  .roster-page table,
+  .roster-page th,
+  .roster-page td,
+  .night,
+  .off{
+    -webkit-print-color-adjust:exact !important;
+    print-color-adjust:exact !important;
   }
 }
   .preview-page{
