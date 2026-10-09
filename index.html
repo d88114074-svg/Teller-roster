@@ -870,53 +870,56 @@ pages.forEach((page,pageIndex)=>{
           TEAM NAME
         */
 
-        if(tellerIndex===0){
+        if(tellerIndex===0 && pageIndex===0){
 
-          html += `
+  html += `
 
-            <td
-              class="team-cell"
-              rowspan="6"
-            >
-              Team ${teamIndex+1}
-            </td>
+    <td
+      class="team-cell"
+      rowspan="6"
+    >
+      Team ${teamIndex+1}
+    </td>
 
-          `;
+  `;
 
-        }
+}
 
 
         /*
           HEAD TELLER
         */
 
-        if(tellerIndex===0){
+        if(tellerIndex===0 && pageIndex===0){
 
-          html += `
+  html += `
 
-            <td
-              class="head-cell"
-              rowspan="6"
-            >
-              ${team.head}
-            </td>
+    <td
+      class="head-cell"
+      rowspan="6"
+    >
+      ${team.head}
+    </td>
 
-          `;
+  `;
 
-        }
-
+}
 
         /*
           FIXED T NUMBER
         */
 
-        html += `
+        if(pageIndex===0){
 
-          <td class="roster-cell">
-            T${tellerIndex+1}
-          </td>
+  html += `
 
-        `;
+    <td class="roster-cell">
+      T${tellerIndex+1}
+    </td>
+
+  `;
+
+}
 
 
 
