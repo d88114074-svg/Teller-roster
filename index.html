@@ -761,19 +761,21 @@ pages.forEach((page,pageIndex)=>{
 
       <div class="roster-page-title">
 
-        <h2>
-          TELLER STAFF ROSTER - ${workplace}
-        </h2>
+  <h2 class="joined-title">
+    ${pageIndex === 0 ? "TELLER STAFF ROSTER" : workplace}
+  </h2>
 
-        <h3>
-          ${monthName}
-        </h3>
+  <h3>
+  ${pageIndex === 0
+    ? new Date(year, month - 1, 1).toLocaleDateString("en-US", { month: "long" })
+    : year}
+</h3>
 
-        <div>
-          Page ${pageIndex + 1}
-        </div>
+  <div>
+    Page ${pageIndex + 1}
+  </div>
 
-      </div>
+</div>
 
 
       <div class="roster-table-wrapper">
